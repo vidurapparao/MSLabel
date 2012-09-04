@@ -145,7 +145,9 @@ static const int kAlignmentBuffer = 5;
 {
     NSMutableArray *stringsArray = [[[string componentsSeparatedByString:@" "] mutableCopy] autorelease];
     NSMutableArray *slicedString = [NSMutableArray array];
+    NSMutableArray *lineWidths = [NSMutableArray array];
     
+    CGFloat lastLineWidth = 0.0;
     while (stringsArray.count != 0) 
     {
         NSString *line = [NSString stringWithString:@""];
@@ -171,14 +173,22 @@ static const int kAlignmentBuffer = 5;
             }
         }
         
-        [slicedString addObject:[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+        line = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        [lineWidths addObject:[NSNumber numberWithFloat:[line sizeWithFont:self.font].width]];
+        [slicedString addObject:line];
         [stringsArray removeObjectsAtIndexes:wordsToRemove];
     }
     
     if (slicedString.count > self.numberOfLines && self.numberOfLines != 0) 
     {
         NSString *line = [slicedString objectAtIndex:(self.numberOfLines - 1)];
-        line = [line stringByReplacingCharactersInRange:NSMakeRange(line.length - 3, 3) withString:@"..."];
+        CGFloat lineWidth = [[lineWidths objectAtIndex:(self.numberOfLines - 1)] floatValue];
+        if (lineWidth + [@"..." sizeWithFont:self.font].width > self.frame.size.width) {
+            line = [line stringByReplacingCharactersInRange:NSMakeRange(line.length - 3, 3) withString:@"..."];
+        }
+        else {
+            line = [NSString stringWithFormat:@"%@...", line];
+        }
         [slicedString removeObjectAtIndex:(self.numberOfLines - 1)];
         [slicedString insertObject:line atIndex:(self.numberOfLines - 1)];
     }
