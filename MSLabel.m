@@ -150,7 +150,7 @@ static const int kAlignmentBuffer = 5;
     CGFloat lastLineWidth = 0.0;
     while (stringsArray.count != 0) 
     {
-        NSString *line = [NSString stringWithString:@""];
+        NSString *line = @"";
         NSMutableIndexSet *wordsToRemove = [NSMutableIndexSet indexSet];
         
         for (int i = 0; i < [stringsArray count]; i++) 
